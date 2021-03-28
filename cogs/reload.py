@@ -17,5 +17,9 @@ class ReloadCog(commands.Cog):
     		return
     	await ctx.send(f'Reloaded {cog}.py!')
     	
+    @reload.error
+    async def reload_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send(f"{ctx.message.author.mention}, you don't have permission to use this command")
 def setup(client):
     client.add_cog(ReloadCog(client))

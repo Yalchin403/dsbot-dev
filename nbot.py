@@ -40,6 +40,7 @@ async def on_message(message):
                 break
         try:
             user = message.author
+            roles_list = [role.name for role in user.roles]
             user_id = str(message.author.id)
             guild_id = str(message.guild.id)
             channel_ids = [803586866619088946, 785614476241666048, 803591038349738014, 785910036953301033, 810641490014502972, 817199997770137600, 817769219898474536]
@@ -49,7 +50,7 @@ async def on_message(message):
             
             user = await client.pg_con.fetch("SELECT * FROM user_levels WHERE user_id = $1 AND guild_id = $2", user_id, guild_id)
             if not user:
-                await client.pg_con.execute("INSERT INTO user_levels (user_id, guild_id, exp, lvl) VALUES ($1, $2, 0, 1)", user_id, guild_id)
+                await client.pg_con.execute("INSERT INTO user_levels (user_id, guild_id, exp, lvl, roles) VALUES ($1, $2, 0, 1, roles_list)", user_id, guild_id)
                 embed = discord.Embed(title="You Leveled Up", description=f"{message.author.mention} your level is 1", color=discord.Color.purple())
                 await message.channel.send(embed=embed)
             else:
@@ -69,12 +70,27 @@ async def create_db_pool():
     client.pg_con = await asyncpg.create_pool(database=database, user=user, password=password, host="127.0.0.1")
 
 @client.command()
+@commands.has_permissions(administrator=True)
 async def load(ctx, extension):
-    client.load_extension(f'cogs.{extension}')
+    try:
+        client.load_extension(f'cogs.{extension}')
+    except:
+        await ctx.send(f"Could not reload {extension}.py")
+
+@load.error
+async def load_error(ctx, error):
+    if isinstance(error, commands.MissingPermissions):
+        await ctx.send(f"{ctx.message.author.mention}, you don't have permission to use this command")
 
 @client.command()
+@commands.has_permissions(administrator=True)
 async def unload(ctx, extension):
     client.unload.extension(f'cogs.{extension}')
+
+@unload.error
+async def unload_error(ctx, error):
+    if isinstance(error, commands.MissingPermissions):
+        await ctx.send(f"{ctx.message.author.mention}, you don't have permission to use this command")
 
 for filename in  os.listdir('./cogs'):
     if filename.endswith('.py'):

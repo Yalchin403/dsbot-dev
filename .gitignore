@@ -1,4 +1,5 @@
 level.json
+**/__pycache__/**
 test.json
 dsbot.py
 .env

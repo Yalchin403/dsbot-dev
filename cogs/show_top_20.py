@@ -22,12 +22,18 @@ class ListUsers(commands.Cog):
         for user in users:
             db_user_id = int(user['user_id'])
             db_user = guild.get_member(db_user_id)
-            user_list += f'{count}. {db_user.mention}\n'
-            count += 1
-            title = f"Top (up to) 20 members with {role} role"
-            description = user_list + "\nPlease make sure you don't use excessive tags, and not using './list' command excessively\nUsers not obeying this rules will be banned!"
-            embed = discord.Embed(title=title, description=description, color=db_user.color)
+            partnership_status = get(guild.roles, name="looking_4_partner")
+            if partnership_status in db_user.roles:
+                status = "🟡"
+            else:
+                status = "🟢"
 
+            user_list += f'{status} **{db_user}**\n'
+            count += 1
+            
+        title = f"Top (up to) 20 members with {role} role"
+        description = user_list + "\n🟡 - **ping for help, not more**\n\n🟢 - **ping for partnership**"
+        embed = discord.Embed(title=title, description=description, color=db_user.color)
 
         await ctx.message.channel.send(embed=embed)
 

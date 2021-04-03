@@ -50,7 +50,7 @@ async def on_message(message):
             
             user = await client.pg_con.fetch("SELECT * FROM user_levels WHERE user_id = $1 AND guild_id = $2", user_id, guild_id)
             if not user:
-                await client.pg_con.execute("INSERT INTO user_levels (user_id, guild_id, exp, lvl, roles) VALUES ($1, $2, 0, 1, roles_list)", user_id, guild_id)
+                await client.pg_con.execute("INSERT INTO user_levels (user_id, guild_id, exp, lvl, roles) VALUES ($1, $2, 0, 1, $3)", user_id, guild_id, roles_list)
                 embed = discord.Embed(title="You Leveled Up", description=f"{message.author.mention} your level is 1", color=discord.Color.purple())
                 await message.channel.send(embed=embed)
             else:

@@ -8,7 +8,7 @@ class ReadyCog(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_ready(self):
-		print("Initiating Bot")
+		print("I'm alive...")
 
 def setup(client):
 	client.add_cog(ReadyCog(client))

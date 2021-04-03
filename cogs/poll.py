@@ -17,7 +17,7 @@ class RemoveCog(commands.Cog):
         title = question
         description = ''
         for i in range(n):
-            description += f"{choices[i]} - {options[i]}\n"
+            description += f"{choices[i]} - {options[i]}\n\n"
         embed = discord.Embed(title=title, description=description, color=discord.Color.purple())
         message = await ctx.send(embed=embed)
         for i in range(n):
